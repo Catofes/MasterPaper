@@ -74,7 +74,7 @@ PandaXII暗物质实验的模拟需求开发改进而成，后者是REST软件\s
     \end{center}
 \end{table*}
   
-探测器铜罐内填充了200kg的氙气与TMA混合气体，总体气压为10bar，被放置在中国锦屏地下实验室中的水池中。下列详细描述了探测器各个部分对本地的贡献：
+探测器铜罐内填充了200kg的氙气与TMA混合气体，总体气压为10bar，被放置在中国锦屏地下实验室中的水池中。下列详细描述了探测器各个部分对本底的贡献：
 
 \begin{description}
     \item[铜罐] 在模拟中我们将罐体和铜盖一起组成的压力铜罐容器作为了一个整体。虽然电解铜相对洁净(radiopure)，但是它作为接近探测气体中最重的组件所产生的背景贡献不可忽略。模拟中使用的铜材料元素活度来自于表\ref{tab:activities}。
@@ -110,47 +110,62 @@ BambooMC框架会记录每个事件沉积在气体中的hit的能量，位置，
 
 在数据处理的过程中还需要注意一点，因为我们的模拟是全链模拟，即一次模拟事件实际上会发生很多次衰变，而且其之间的时间间隔可能会非常的长，因而需要依据事件中各个hit的时间信息进行合理的划分。最终得到的数据如表\ref{tab:rawBck}所示。
 
-\begin{table*}[htb]
+\begin{table*}
     \centering
-    \begin{tabular*}{0.95\textwidth}{@{\extracolsep{\fill}}ccccc}
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc}
       \hline
       \hline
-      \textbf{组件}&\textbf{元素}&\textbf{放射性活度}&\textbf{本底强度（计数/年）}&\textbf{ BI($10^{-5}c\/(keV\cdot kg\cdot y$))}\\
+      \textbf{组件}&\textbf{元素}&\textbf{放射性活度}&\textbf{\multirow{2}{5em}{\centering 本底强度\\计数/年}}&\textbf{ \multirow{2}{8em}{\centering BI\\$10^{-5}c\/(keV\cdot kg\cdot y$)}}\\\\
       \hline
-      \multirow{2}{4em}{实验室水泥墙壁} & $^{238}$U  &  9.9 Bq/kg & $<0.40\pm0.03$  & -  \\
+      \multirow{2}{8em}{实验室水泥墙壁\\Laboratory walls} & $^{238}$U  &  9.9 Bq/kg & $<0.40\pm0.03$  & -  \\
                                         & $^{232}$Th &  4.4 Bq/kg &  $<0.22\pm0.02$  & - \\ \hline
   
-      \multirow{2}{4em}{水池} & $^{238}$U  & 0.12 $\mu$Bq/kg & 0.20 $\pm$ 0.1 &  0.74  \\
+      \multirow{2}{8em}{水池\\Water} & $^{238}$U  & 0.12 $\mu$Bq/kg & 0.20 $\pm$ 0.1 &  0.74  \\
                                              & $^{232}$Th & 0.04 $\mu$Bq/kg & 0.24  $\pm$ 0.06 & 0.96 \\ \hline
-      \multirow{3}{4em}{铜罐罐体}              & $^{238}$U  &  0.75 $\mu$Bq/kg & 1.73  $\pm$ 0.12 &  6.9  \\
+      \multirow{3}{8em}{铜罐罐体\\Barrel}              & $^{238}$U  &  0.75 $\mu$Bq/kg & 1.73  $\pm$ 0.12 &  6.9  \\
                                              & $^{232}$Th & 0.2  $\mu$Bq/kg & 4.63  $\pm$ 0.18 & 18.5 \\
                                              & $^{60}$Co  & 10 $\mu$Bq/kg & 9.8  $\pm$ 1.0 &  39.0  \\ \hline
   
-      \multirow{3}{4em}{铜罐盖子}            & $^{238}$U  & 0.75 $\mu$Bq/kg  & 0.83  $\pm$ 0.11 &  3.3 \\
+      \multirow{3}{8em}{铜罐盖子\\Endcaps}            & $^{238}$U  & 0.75 $\mu$Bq/kg  & 0.83  $\pm$ 0.11 &  3.3 \\
                                              & $^{232}$Th & 0.2 $\mu$Bq/kg & 2.4  $\pm$ 0.1 &  9.8 \\
                                              & $^{60}$Co  & 10 $\mu$Bq/kg & 4.4  $\pm$ 1.0 &  17.8  \\ \hline
   
-      \multirow{2}{4em}{不锈钢螺钉}              & $^{238}$U   &  0.5 mBq/kg & 7.5 $\pm$ 1.5 & 30.1  \\
-                                            & $^{232}$Th  & 0.32 mBq/kg & 39.8 $\pm$ 2.7 & 159  \\ \hline
-      \multirow{2}{4em}{场笼支撑体}    & $^{238}$U   & 4.94 $\mu$Bq/kg  & 15.0  $\pm$ 0.5  & 59.9 \\
+      \multirow{2}{8em}{不锈钢螺钉\\Bolts}              & $^{238}$U   &  0.5 mBq/kg & 7.5 $\pm$ 1.5 & 30.1  \\
+                                                  & $^{232}$Th  & 0.32 mBq/kg & 39.8 $\pm$ 2.7 & 159  \\ \hline
+      \multirow{2}{8em}{场笼支撑体\\Field insulator}    & $^{238}$U   & 4.94 $\mu$Bq/kg  & 15.0  $\pm$ 0.5  & 59.9 \\
                                             & $^{232}$Th  & 0.1 $\mu$Bq/kg & 2.69 $\pm$ 0.03 & 10.7  \\
-      \multirow{2}{4em}{铜环}          & $^{238}$U  & 0.75 $\mu$Bq/kg  &  0.67 $\pm$ 0.01  & 2.7  \\
+      \multirow{2}{8em}{铜环\\ Rings}          & $^{238}$U  & 0.75 $\mu$Bq/kg  &  0.67 $\pm$ 0.01  & 2.7  \\
                                             & $^{232}$Th  & 0.2 $\mu$Bq/kg & 0.95 $\pm$ 0.01 &  3.8  \\ \hline
-      \multirow{2}{4em}{电子学}        & $^{238}$U  & 0.26 Bq & 1.0 $\pm$ 0.3  & 4.2  \\
+      \multirow{2}{8em}{电子学\\Electronics}        & $^{238}$U  & 0.26 Bq & 1.0 $\pm$ 0.3  & 4.2  \\
                                             & $^{232}$Th  & 0.07 Bq & 2.8 $\pm$ 0.2  & 11.3 \\ \hline
-      \multirow{2}{4em}{Micromegas}         & $^{238}$U  & 45 nBq/cm$^2$ & 60.5 $\pm$ 1.7 &  241.6  \\
+      \multirow{2}{8em}{读出平面\\Micromegas}         & $^{238}$U  & 45 nBq/cm$^2$ & 60.5 $\pm$ 1.7 &  241.6  \\
                                             & $^{232}$Th  & 14 nBq/cm$^2$ & 23.5 $\pm$ 0.6 &  93.9   \\ \hline
-      \multirow{1}{4em}{极板}            & $^{214}$Bi  & 2 nBq/cm$^2$ & 4.1  $\pm$ 0.2  & 16.5 \\
+      \multirow{1}{8em}{极板\\Cathode}            & $^{214}$Bi  & 2 nBq/cm$^2$ & 4.1  $\pm$ 0.2  & 16.5 \\\\
       \hline
       \hline
     \end{tabular*}
-    \caption{探测器不同组件对背景信号的贡献。表中的BI是指本底水平(Background Index)}
+    \caption{探测器不同组件对背景信号的贡献，能量区间为2395keV到2520keV。表中的BI是指本底水平(Background Index)}
     \label{tab:rawBck}
   \end{table*}
   
+从表中可以看出来自与Micromegas的本底辐射是最高的，这是可以理解的。因为Micromegas自身在探测器内部，紧贴着氙气，而且它的放射性活度也相当的大，来自于Micromegas的活度约为$1.59\times10^{-3}$Bq（$^{238}$U)，相当于7吨重的铜罐的1/6，因而其贡献了相当部分的背景辐射。随后贡献较大的是不锈钢螺钉，虽然它们都在铜罐外面，部分辐射被铜罐所屏蔽，但是不锈钢材料自身的辐射水平太高，其对实验的影响也是相当巨大。
+
+图\ref{fig:stacked_spectrum}使用层叠方式绘制了探测器不同组件所贡献的本底事件能谱分布，能谱范围是2200keV到2700keV，我们需要关注的ROI，即$Q_{\beta\beta}\pm3\% FWHM$为2395keV到2520keV。
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.4\columnwidth]{pic/fig6.pdf}
+    \includegraphics[width=0.4\columnwidth]{pic/fig7.pdf}
+    \caption{探测器不同组件所贡献的本底事件能谱分布，能谱范围为2200keV到2700keV，ROI范围为2395keV到2520keV。左图为来自元素$^{238}$U，右图为来自元素$^{232}$Th，两图都为堆叠方式绘制,图例与中文的对应可以参照表\ref{tab:rawBck}。}
+    \label{fig:stacked_spectrum}
+\end{figure}
+
+\section{探测器响应，读出系统以及电子学触发}
+
+在上述模拟中，我们只考虑到了背景事件在探测器内部沉积的所有能量，并没有考虑到探测器自身的响应以及读出系统带来的影响。举例而言上节模拟中来自于铜罐体$^{60}$Co的背景辐射强度也是相对较大的，因为$^{60}$Co自身会放射出1.33MeV和1.17MeV的两个$\gamma$粒子，如果这两个粒子都被探测器探测到接受那么就有可能收集到一个总沉积能量在$Q_{\beta\beta}$附近的事件。然而这两个$\gamma$粒子之间是完全独立的，哪怕它们同时在探测器内沉积能量，但是它们发生康普顿散射的位置是完全无关的，激发出的电子漂移到读出板的时间也是有间隔的。因而在考虑到探测器的触发过程后，来自$^{60}$Co的本底事件会被极大的压低。本节将会细致的描述和讨论PandaXIII实验模拟过程中对探测器响应，读出系统结构和电子学触发等方面的处理细节。
 
 
 
-\section{探测器响应及读出触发}
+\section{其他可能的探测器设计中的背景模拟}
 
 % vim:ts=4:sw=4
