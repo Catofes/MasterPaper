@@ -1,7 +1,127 @@
 % Copyright (c) 2014,2016 Casper Ti. Vector
 % Public domain.
 
-\chapter{附件}
-\pkuthssffaq % 中文测试文字。
+\chapter{PandaXIII其他的TPC设计中的模拟工作}
+%\pkuthssffaq % 中文测试文字。
+
+PandaXIII中除了设计了如节\ref{section:detector}中所描述探测器结构外，还设计了其他的探测器结构加以测试。在原设计中铜罐自身即为压力容器，所以需要使用不锈钢钉进行铆合，带来了较大的本底，同时铜相对较软，作为压力容器可能会带来一定的风险，所以实验就设计了使用强度更强的，质量更轻的钛罐作为压力容器，内部衬铜完全作为屏蔽结构，以期待来带更好的屏蔽效果。
+
+\begin{table*}[hbt]
+    \begin{center}
+        \begin{tabular*}{0.75\textwidth}{@{\extracolsep{\fill}}ccccc}
+        \hline
+        \hline
+        \textbf{组件}   &   \textbf{参数}   &   \textbf{值} &   \textbf{材料} & \textbf{质量} \\ \hline
+        \multirow{3}{*}{钛罐} 
+            &   内径&   85\,cm&     \multirow{3}{*}{钛} &   \multirow{3}{*}{855 kg} \\
+            &   高度&   210\,cm&    &   \\   
+            &   壁厚&   1.5\,cm&    &   \\\hline
+        \multirow{2}{*}{钛盖} 
+            & 直径 & 91.5\,cm & \multirow{2}{*}{钛} & \multirow{2}{*}{1758 kg} \\
+            & 厚度 & 7.5\,cm &  &    \\\hline
+        \multirow{2}{*}{铜衬底} 
+            & 内径 & 80\,cm & \multirow{2}{*}{铜} & \multirow{2}{*}{6678 kg} \\
+            & 内高 & 200\,cm &  &    \\
+            & 厚度 & 5\,cm &  & \\\hline
+        \multirow{2}{*}{螺钉} 
+            & 直径 & 1.4\,cm & \multirow{2}{*}{不锈钢} & \multirow{2}{*}{94.6 kg} \\
+            & 高度 & 20\,cm &  &    \\
+        \hline
+        \hline
+        \end{tabular*}
+        \caption{钛罐组成部件的几何参数，材料以及质量表。\supercite{cdr}}
+        \label{tab:ti_structure}
+    \end{center}
+\end{table*}
+
+探测器设计尺寸表\ref{tab:ti_structure}所示。虽然钛罐子自身质量很轻，但是因为工艺原因该材料放射性清洁程度极差，在模拟中我们认为\utte的活度为90\uBqkg，而\thttt的活度为
+230\uBqkg。不考虑探测器响应的模拟结果如表所示\ref{tab:ti_bck}所示。可以看出虽然来自于螺钉的本底事件被压低了一些，但是钛罐自身产生的本地辐射太强，远远高于铜罐的设计。
+
+\begin{table*}[hbt]
+    \centering
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc}
+      \hline
+      \hline
+      \textbf{组件}&\textbf{元素}&\textbf{放射性活度}&\textbf{\multirow{2}{5em}{\centering 本底计数\\计数/年}}&\textbf{ \multirow{2}{8em}{\centering BI\\$10^{-5}c\/(keV\cdot kg\cdot y$)}}\\\\
+      \hline
+        \multirow{2}{8em}{钛罐罐体} 
+            & $^{238}$U  &  90 $\mu$Bq/kg & 10.7 &  43  \\
+            & $^{232}$Th & 230  $\mu$Bq/kg & 233.4 & 892 \\ \hline
+        \multirow{2}{8em}{钛罐盖子}
+            & $^{238}$U  & 90 $\mu$Bq/kg  & 5.8 &  23.2 \\
+            & $^{232}$Th & 220 $\mu$Bq/kg & 132.7 & 530  \\
+            \hline
+         \multirow{2}{8em}{不锈钢螺钉}              
+            & $^{238}$U   &  0.5 mBq/kg & 1.4 & 5.6  \\
+            & $^{232}$Th  & 0.32 mBq/kg & 6.5 &  26.7 \\ \hline
+        \multirow{2}{8em}{铜衬底}            
+            & $^{238}$U  & 0.75 $\mu$Bq/kg  & 2.74 & 11 \\
+            & $^{232}$Th & 0.2 $\mu$Bq/kg & 7.2& 29 \\
+             \hline
+      \hline
+      \hline
+    \end{tabular*}
+    \caption{钛罐设计中罐体以及螺钉对本底贡献表。}
+    \label{tab:ti_bck}
+  \end{table*}
+
+
+  在发现5cm厚的铜衬底不足以屏蔽来自钛罐的本底时，我们继续测试了使用更厚的10cm铜衬底的效果，此时探测器的结构如表\ref{tab:ti_structure_big}，不考虑探测器响应的本底结果如表\ref{tab:ti_bck_big}所示。此时本地强度依然是纯铜罐设计的5倍左右，完全不能够被接受，因此在目前的设计中还是直接使用铜罐作为压力容器。如果我们能够找到更为洁净的钛以及不锈钢材料那么还是有可能更换设计的。
+
+  \begin{table*}[hbt]
+    \begin{center}
+        \begin{tabular*}{0.75\textwidth}{@{\extracolsep{\fill}}ccccc}
+        \hline
+        \hline
+        \textbf{组件}   &   \textbf{参数}   &   \textbf{值} &   \textbf{材料} & \textbf{质量} \\ \hline
+        \multirow{3}{*}{钛罐} 
+            &   内径&   90\,cm&     \multirow{3}{*}{钛} &   \multirow{3}{*}{1957 kg} \\
+            &   高度&   220\,cm&    &   \\   
+            &   壁厚&   1.5\,cm&    &   \\\hline
+        \multirow{2}{*}{钛盖} 
+            & 直径 & 96.5\,cm & \multirow{2}{*}{钛} & \multirow{2}{*}{1758 kg} \\
+            & 厚度 & 7.5\,cm &  &    \\\hline
+        \multirow{2}{*}{铜衬底} 
+            & 内径 & 80\,cm & \multirow{2}{*}{铜} & \multirow{2}{*}{14130 kg} \\
+            & 内高 & 200\,cm &  &    \\
+            & 厚度 & 10\,cm &  & \\\hline
+        \multirow{2}{*}{螺钉} 
+            & 直径 & 1.4\,cm & \multirow{2}{*}{不锈钢} & \multirow{2}{*}{94.6 kg} \\
+            & 高度 & 20\,cm &  &    \\
+        \hline
+        \hline
+        \end{tabular*}
+        \caption{加厚钛罐组成部件的几何参数，材料以及质量表。\supercite{cdr}}
+        \label{tab:ti_structure_big}
+    \end{center}
+\end{table*}
+
+  \begin{table*}[hbt]
+    \centering
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc}
+      \hline
+      \hline
+      \textbf{组件}&\textbf{元素}&\textbf{放射性活度}&\textbf{\multirow{2}{5em}{\centering 本底计数\\计数/年}}&\textbf{ \multirow{2}{8em}{\centering BI\\$10^{-5}c\/(keV\cdot kg\cdot y$)}}\\\\
+      \hline
+        \multirow{2}{8em}{钛罐罐体} 
+            & $^{238}$U  &  90 $\mu$Bq/kg & 1.6 &  6.4  \\
+            & $^{232}$Th & 230  $\mu$Bq/kg & 45.0 & 180 \\ \hline
+        \multirow{2}{8em}{钛罐盖子}
+            & $^{238}$U  & 90 $\mu$Bq/kg  & 2.2 &  8.7 \\
+            & $^{232}$Th & 220 $\mu$Bq/kg & 28.1 & 112  \\
+            \hline
+         \multirow{2}{8em}{不锈钢螺钉}              
+            & $^{238}$U   &  0.5 mBq/kg & <0.1 & <0.6  \\
+            & $^{232}$Th  & 0.32 mBq/kg & 0.97 &  3.9 \\ \hline
+        \multirow{2}{8em}{铜衬底}            
+            & $^{238}$U  & 0.75 $\mu$Bq/kg  & 3.1 & 12 \\
+            & $^{232}$Th & 0.2 $\mu$Bq/kg & 8.1& 32 \\
+             \hline
+      \hline
+      \hline
+    \end{tabular*}
+    \caption{加厚钛罐设计中罐体以及螺钉对本底贡献表。}
+    \label{tab:ti_bck_big}
+  \end{table*}
 
 % vim:ts=4:sw=4
