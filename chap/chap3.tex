@@ -66,7 +66,7 @@ MM条状读出同时还带来了另外一个困难，因为一个电子要么落
 \subsection{使用动机}
 正如上文所说的，使用MM作为读出时很难通过重建出3维径迹后利用物理图像直接分类，但是如果将形如图\ref{fig:samples}的图片交于人眼来识别，那么相信绝大部分的人都可以轻而易举的分辨出NLDBD事件和背景$\gamma$事件。同时在这个分辨过程中我们并没有试图将两个偷影重建成3维的信息，而是直接通过分析比较两个投影并找到径迹的末端。这种行为操作相对来说难于量化，虽然可能可以通过精细的CUT达成，但是在这些操作的过程中可能需要人工的丢掉大量的数据以降低CUT的复杂度，这都不是我们所希望的。
 
-近些年来随着机器学习技术的快速发展，我们发现似乎CNN真的能够进行一些类似于人类智能的处理，例如Google公司所开发的围棋AI，AlphaGo\supercite{gibney2016google}，更是击败了诸多现役棋手，本文会在下一小节详细介绍有关机器学习和CNN的知识。鉴于CNN如此“智能“的表现，我们希望它能够完成类似自然人所做到的事情，即通过观察径迹的两个方向上的投影而做出事件类型的判断。而事实上CNN也较为完美的达到了我们的目标，有关测试的结果见章节\ref{section:cnn_result}。
+近些年来随着机器学习技术的快速发展，我们发现似乎CNN真的能够进行一些类似于人类智能的处理，例如Google公司所开发的围棋AI，AlphaGo\supercite{gibney2016google}，更是击败了诸多现役棋手，本文会在下一小节详细介绍有关机器学习和CNN的知识。鉴于CNN如此“智能“的表现，我们希望它能够完成类似自然人所做到的事情，即通过观察径迹的两个方向上的投影而做出准确的判断。CNN能够直接将图片作为输入，这样它能够最大限度的利用重建后的信息。同时我们可以通过模拟给CNN提供无比大量的信号样本和背景样本，其他CNN应用场景中最为困难的样本采集和标定对于模拟来说根本不是问题。可以看出CNN非常适合我们的实验需求，而事实上它也较为完美的达到了我们的目标，有关测试的结果见章节\ref{section:cnn_result}。
 
 \subsection{神经网络介绍}
 
@@ -211,13 +211,121 @@ PandaXIII实验设计中读出电子学部分将会以5MHz的频率采样512个�
 \subsubsection{图片转换}
     重建后得到的两个直方图即为事件在X-Z-energy和Y-Z-energy上的两个投影。我们分别计算出两个投影以能量为权重的位置重心，并以该位置为中心，按照3mm的尺寸重新划分(rebin)直方图，并丢弃超过60x60范围外的数据信息，此时两个投影被转变为两个60x60尺寸的直方图。对于每个直方图，我们都可以将其映射为一张60x60pixels的灰度图片，每个像素灰度的大小即代表着沉积能量的大小，能量最大的点所对应的灰度值为255。在进行图片转换后，事件总能量的信息，以及hit的绝对位置信息都被丢弃掉了，因而我们在模拟背景数据中所做的两个近似是合理的。
 
+    \begin{figure}
+        \centering
+        \begin{subfigure}[t]{0.22\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{pic/03_signal_3d_track.pdf}
+          \caption{}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.44\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{pic/03_signal_track.pdf}
+          \caption{}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+          \centering
+          \setlength{\fboxsep}{0pt}
+          \fbox{\includegraphics[width=\textwidth]{pic/03_signal_final.png}}
+          \caption{}
+        \end{subfigure}
+        
+        \begin{subfigure}[t]{0.22\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{pic/03_background_3d_track.pdf}
+          \caption{}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.44\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{pic/03_background_track.pdf}
+          \caption{}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+          \centering
+          \setlength{\fboxsep}{0pt}
+          \fbox{\includegraphics[width=\textwidth]{pic/03_background_final.png}}
+          \caption{}
+        \end{subfigure}
+        
+        \caption{NLDBD事件以及背景事件转换示意图。上部分：\xeots NLDBD事件，下部分：2447keV $\gamma$本底事件。(a)和(d)：BambooMC模拟得到的3维hit信息。(b)和(e)：重建后得到的X-Z-energy 以及 Y-Z-energy投影。(c)和(f)：转换完成后的图片示意图，该图片并非CNN训练中所使用的图片，而是为了方便读者观看图片的颜色被后期处理过，其中青色代表着红色通道，粉红色代表着绿色通道。}
+        \label{fig:image_mapping}
+        \end{figure}
 
+        
+\subsubsection{数据转换总结}
+图\ref{fig:image_mapping}举例示意了NLDBD事件及$\gamma$本底事件的原始hit信息，重建后的投影信息以及用于CNN训练的图片示意图。我们一共模拟了1百万次NLDBD信号事件以及各$2\times10^9$次
+2447keV和2614keV的$\gamma$背景事件，经过上述各个转化过程后所生成的数据规模如表\ref{tab:convert}所示。
+
+我们期望使用CNN来进行一个二分类过程，所以信号和本底的数目应该保持对等，即各占50\%。由于我们的背景是有两部分组成的，虽然根据之前的分析两种背景对于CNN而言应该是没有区别的，但是这里我们还是混合了他们共同作为本底信号，混杂的比例是3.75:1，即无氧铜中U和Th丰都数目比。但需要注意的是，本文并没有研究该比例对实验结果的影响，这一点需要后续的继续研究。我们一共准备了$1.12\times10^6$组信号和背景数据图片，其中80\%被用于神经网络的训练过程中的训练部分(train)，10\%被用于神经网络训练过程中的验证部分(valid)，最后的10\%用于后续的各种测试和检验。
+        
+\renewcommand\arraystretch{1.4}
+\begin{table*}
+    \centering
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ccccc}
+        \hline
+        \hline							
+        	&	NLDBD	&	2447keV$\gamma$射线	&	2614keV$\gamma$射线	&	合计	\\
+        \hline
+        MC模拟事件数目	&	$1\times10^6$	&	$2\times10^9$	&	$2\times10^9$	&		\\
+        总能量落入ROI事件数目	&	717163	&	3840611	&	1471989	&		\\
+        漂移以及触发后事件数目	&	562959	&	1151395	&	485357	&		\\
+        触发效率	&	78.50\%	&	30.00\%	&	33.00\%	&		\\
+        总体探测效率	&	56.20\%	&	$5.76\times10^{-4}$	&	$2.43\times10^{-4}$	&		\\
+        CNN图片数目	&	562959	&	444441	&	118517	&	1125917	\\
+        \hline
+        \hline
+    \end{tabular*}
+    \caption{NLDBD信号事件以及2447keV和2614keV的$\gamma$背景事件模拟即转换数据表。}
+    \label{tab:convert}
+  \end{table*}
 
 \section{训练网络}
 \label{section:train}
 
+在完成数据准备后接下来的操作便是选择一个合适的CNN模型，可以说CNN模型的选择和调整是决定了其使用效果的关键，一个优秀的适合具体问题的模型可能能够带来极佳的分类效率和极小的误差。但是模型的构建也是一个非常困难的问题，在计算机学科中寻找到一个优秀的网络模型需要大量的计算验证，以及人工修正调整，因而在物理学中对CNN进行基本应用的过程中，使用现有的模型并对其加以微小的修正是一个更为经济和有效率的事情。
 
+我们在研究过程中测试并对比了多个神经网络模型，包括我们自己构建的简单的3层卷积神经网络模型，VGG16模型\supercite{simonyan2014very}以及Reset50模型\supercite{he2016deep}。我们使用了较小的数据集（约12.5\%）对这三个模型进行了测试，最后选定了ResNet50作为最终使用的模型。关于前两种模型的介绍以及三者的对比见附录\ref{section:resnet_compare}。
 
+ResNet被称作深度残差网络。在传统的卷积神经网络图像分类研究中，有一些相关的证据证明网络的深度严重的影响了网络的效果，但是单纯的叠加层数会遇到梯度弥散的问题，即在训练过程中样本对网络的修改并不能有效的向上传递，导致部分网络层好像就没有被训练一样。ResNet提出了如图\ref{fig:resnet}类似的结构，将输入X再次引入到结果，从而能够”跳过“部分层来降低训练造成的误差，这种连接方式被称作”快捷连接“(shortcut connection)。在本文中使用了拥有50个卷积层的Resnet网络作为主体结构，并对网络的输入层和输出部分做了简单的修改以满足我们的需求，网络的简单结构以及参数如表\ref{tab:resnet}所示。从表中可以看出，本文中的ResNet网络接受一个240x240像素的彩色图片作为输入，最终输出一个介于0和1之间的小数来表征网络的判断结果。
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\columnwidth]{pic/trigger_select.png}
+    \caption{ResNet网络中快捷连接示意图，可以看出输入量X被直接引入到输出中，从而使得网络$\mathcal{F}(X)$部分不会带来过多的误差。}
+    \label{fig:resnet}
+\end{figure}
+\renewcommand\arraystretch{1.0}
+\begin{table}
+    \centering
+    \begin{tabular}{ccccc}
+      \\\hline
+  layer name & layer type &  output tensor  & layer attribute & repetition \\\hline
+  input\_1  & InputLayer & 240, 240, 3 &  & \\ \hline
+  conv1 block & Convolution2D & 120, 120, 64 & 7$\times$7, 64 &  \\ \hline
+  pooling & MaxPooling2D & 59, 59, 64 &  &  \\ \hline
+  \multirow{3}{*}{conv2 block} & Convolution2D & 59, 59, 64 & 1$\times$1, 64 & \multirow{3}{*}3\\
+   & Convolution2D & 59, 59, 64 & 3$\times$3, 64 & \\
+   & Convolution2D & 59, 59, 256 & 1$\times$1, 256 & \\ \hline
+  \multirow{3}{*}{conv3 block} & Convolution2D & 30, 30, 128 & 1$\times$1, 128 & \multirow{3}{*}{4} \\
+   & Convolution2D & 30, 30, 128 & 3$\times$3, 128 & \\
+   & Convolution2D & 30, 30, 512 & 1$\times$1, 512 & \\ \hline
+  \multirow{3}{*}{conv4 block} & Convolution2D & 15, 15, 256 & 1$\times$1, 256 & \multirow{3}{*}{6} \\
+   & Convolution2D & 15, 15, 256 & 3$\times$3, 256 & \\
+   & Convolution2D & 15, 15, 1024 & 1$\times$1, 1024 & \\ \hline
+  \multirow{3}{*}{conv5 block} &  Convolution2D & 8, 8, 512 & 1$\times$1, 512 & \multirow{3}{*}{3}\\
+   & Convolution2D & 8, 8, 512 & 3$\times$3, 512 & \\
+   & Convolution2D & 8, 8, 2048 & 1$\times$1, 2048 & \\ \hline
+  pooling & AveragePooling2D & 1, 1, 2048 &  & \\ \hline
+  flatten & Flatten & 2048 &  & \\ \hline
+  dense & Dense & 256 & relu & \\  \hline
+  dropout & Dropout & 256 &  & \\   \hline
+  dense & Dense & 1 & sigmoid & \\ \hline
+    \end{tabular}
+    \caption{修改后的ResNet网络结构示意表，表中”repetition“表示网络块重复堆叠的次数，默认是1。网络中部分层以及快捷连接被省略，关于Resnet50核心部分的组成请参见论文\cite{he2016deep}。}
+    \label{tab:resnet}
+  \end{table}
+
+  
 \section{测试及结果分析}
 \label{section:cnn_result}
 
