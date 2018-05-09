@@ -256,7 +256,7 @@ PandaXIII实验设计中读出电子学部分将会以5MHz的频率采样512个�
 图\ref{fig:image_mapping}举例示意了NLDBD事件及$\gamma$本底事件的原始hit信息，重建后的投影信息以及用于CNN训练的图片示意图。我们一共模拟了1百万次NLDBD信号事件以及各$2\times10^9$次
 2447keV和2614keV的$\gamma$背景事件，经过上述各个转化过程后所生成的数据规模如表\ref{tab:convert}所示。
 
-我们期望使用CNN来进行一个二分类过程，所以信号和本底的数目应该保持对等，即各占50\%。由于我们的背景是有两部分组成的，虽然根据之前的分析两种背景对于CNN而言应该是没有区别的，但是这里我们还是混合了他们共同作为本底信号，混杂的比例是3.75:1，即无氧铜中U和Th丰都数目比。但需要注意的是，本文并没有研究该比例对实验结果的影响，这一点需要后续的继续研究。我们一共准备了$1.12\times10^6$组信号和背景数据图片，其中80\%被用于神经网络的训练过程中的训练部分(train)，10\%被用于神经网络训练过程中的验证部分(valid)，最后的10\%用于后续的各种测试和检验。
+我们期望使用CNN来进行一个二分类过程，所以信号和本底的数目应该保持对等，即各占50\%。由于我们的背景是有两部分组成的，虽然根据之前的分析两种背景对于CNN而言应该是没有区别的，但是这里我们还是混合了他们共同作为本底信号，混杂的比例是3.75:1，即无氧铜中U和Th丰都数目比。但需要注意的是，本文并没有研究该比例对实验结果的影响，这一点需要后续的继续研究。我们一共准备了$1.12\times10^6$组信号和背景数据图片，其中80\%被用于神经网络的训练过程中的训练部分(Training dataset)，10\%被用于神经网络训练过程中的验证部分(Validation dataset)，最后的10\%用于后续的各种测试和检验(Check dataset)。
         
 \renewcommand\arraystretch{1.4}
 \begin{table*}
@@ -290,11 +290,10 @@ ResNet被称作深度残差网络。在传统的卷积神经网络图像分类�
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\columnwidth]{pic/trigger_select.png}
+    \includegraphics[width=0.6\columnwidth]{pic/resnet.png}
     \caption{ResNet网络中快捷连接示意图，可以看出输入量X被直接引入到输出中，从而使得网络$\mathcal{F}(X)$部分不会带来过多的误差。}
     \label{fig:resnet}
 \end{figure}
-\renewcommand\arraystretch{1.0}
 \begin{table}
     \centering
     \begin{tabular}{ccccc}
@@ -321,12 +320,64 @@ ResNet被称作深度残差网络。在传统的卷积神经网络图像分类�
   dropout & Dropout & 256 &  & \\   \hline
   dense & Dense & 1 & sigmoid & \\ \hline
     \end{tabular}
-    \caption{修改后的ResNet网络结构示意表，表中”repetition“表示网络块重复堆叠的次数，默认是1。网络中部分层以及快捷连接被省略，关于Resnet50核心部分的组成请参见论文\cite{he2016deep}。}
+    \caption{修改后的ResNet网络结构示意表，表中“repetition”表示网络块重复堆叠的次数，默认是1。网络中部分层以及快捷连接被省略，关于Resnet50核心部分的组成请参见论文\cite{he2016deep}。}
     \label{tab:resnet}
   \end{table}
 
+我们使用Keras\supercite{keras}深度学习框架来构建并训练我们的CNN网络。Keras使用Python作为框架的主要语言，并可以使用由Google推出的Tensorflow\supercite{tensorflow}张量计算框架来进行具体的计算，因而可以应用由英伟达公司推出的CUDA显卡计算平台以及cuDNN\supercite{cudnn}库来加速训练的过程。训练中我们使用了一台配置了2块Nvidia Geforce 1080显卡的工作站，一共训练了30轮(epochs\footnote{一轮是指所有的训练数据通过一次神经网络。})，每轮训练后得到的权重信息都被保存了下来以供记下来的分析。在训练过程中为了降低过拟合同时搞笑的利用数据，我们对于输入图片也做了实时的数据提升，具体的训练细节见附录\ref{section:train_details}。训练操作总共耗时约5天。
   
-\section{测试及结果分析}
+\section{训练结果分析}
 \label{section:cnn_result}
 
+判断一个神经网络优劣的最为直观的指标之一便是准确度（accuracy），在分类模型中，它被定义为正确分类的样本数目与总样本数目的比值，用于标示该网络预测结果与真实结果的偏离程度。图\ref{fig:train_par}展示了在我们训练过程中，网络的准确度的变化趋势。
+可以看出随着训练的逐步进行，训练数据集的准确度不断增加。但在20轮后训练数据集的准确度明显超过了验证数据集，即发生了过拟合现象(overfit)。因此我们选择训练集和测试集准确度比较接近但又没有发生过拟合现象的训练结果作为继续研究的对象，即第16轮到第20轮训练得到的网络权重。
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{pic/04_resnet_tendency.pdf}
+    \caption{训练过程中网络准确度随训练轮数的变化趋势。红色数据点表示训练集数据的准确度，蓝色数据点标示验证数据集的准确度。}
+    \label{fig:train_par}
+\end{figure}
+
+在完成训练得到对应的网络权重之后，我们就可以将权重加载到我们的CNN网络模型中，并用它来预测未知的事件。因而通过上文的训练，我们得到了5组不同的网络权重，也就得到了5个CNN网络（后文称之为Model-16至Model-20）。对于任一一个输入的事件图片，它们各自都可给出一个0到1之间的数$\kappa$，表征该事件更为接近一个背景事件(0)，抑或更为接近一个信号事件(1)。图\ref{fig:cnn_dis}绘制了加载第16轮训练权重的网络（Model-16)，预测测试数据集所得到的$\kappa$的分布。
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{pic/05_resnet_distribution.pdf}
+    \caption{Model-16对于测试集数据的预测结果分布图。当$\kappa$接近1时背景事件的增多是因为的确有部分背景的径迹类似于NLDBD事件的径迹。}
+    \label{fig:cnn_dis}
+\end{figure}
+
+单纯的使用准确度并不能较好的评价网络的效果，因而需要引入其他的评价方式来从上述5个网络中挑选出最好的一个。对于每个网络我们可以通过为$\kappa$设置一个阈值($\kappa_c$)来区分背景和信号，这样就可以给出每个网络的信号以及背景效率曲线。图\ref{fig:cnn_eff}上半部分给出了Model-16在不同阈值处的效率曲线。阈值的选择可以通过优化FOM(figure of merit)指标来完成，它一般被定义为最终探测到的信号的数目与背景数目开方的比值，即:
+\begin{equation}
+    FOM \propto \frac{s}{\sqrt{b}}=\frac{s_d}{\sqrt{b_d}}\cdot \frac{\epsilon_{s,cnn}}{\sqrt{\epsilon_{b,cnn}}}\propto \frac{\epsilon_{s,cnn}}{\sqrt{\epsilon_{b,cnn}}}
+\end{equation}
+其中$\epsilon_{s,cnn}$和$\epsilon_{b,cnn}$即为在选定阈值$\kappa_c$后网络的信号效率和背景效率，$s_d$和$b_b$指在未经CNN网络处理前，探测器得到的信号数目以及背景数目。
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{pic/06_efficiency.pdf}
+    \caption{上半部分：Model-16网络的信号效率(红线)以及背景拒绝效率（蓝线）随$\kappa_c$变化图。下半部分：效率比$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$随$\kappa_c$变化示意图。最优$\kappa_c$位置由绿色虚线绘制出。}
+    \label{fig:cnn_eff}
+\end{figure}
+
+根据PandaXIII中期报告中的计算，TPC所能探测到的NLDBD事件的半衰期与FOM成正比，因而可以通过最优化$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$来选择网络的cut位置$\kappa_c$。图\ref{fig:cnn_eff}下半部分展示了Model-16中$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$随$\kappa_c$的变化。当$\kappa_c$位于0.983处时，事件鉴别的FOM值最大。不同网络之间的优劣差别也可以通过对比最优FOM得到，表\ref{tab:efficiencies}描述了Model-16到Model-20，5种不同权重的网络FOM相关信息，从中可以看出Model-16能够达到最优的鉴别效果。此时信号效率为47.5\%，背景拒绝率为99.43\%，即压低本地约175倍。
+
+\begin{table}[hbt]
+    \centering
+    \begin{tabular}{cccccc}
+      \\\hline
+      epoch & optimized $\kappa_c$ & $\epsilon_{s,cnn}$ & $ 1-\epsilon_{b,cnn}$ &$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$ & final BI\\\hline
+      16 & 0.983 & 0.475 & 0.9943 & 6.264 & $1.775\times10^{-5}$ \\
+      17 & 0.976 & 0.569 & 0.9916 & 6.196 & $2.605\times10^{-5}$ \\
+      18 & 0.981 & 0.487 & 0.9936 & 6.098 & $1.968\times10^{-5}$ \\
+      19 & 0.966 & 0.540 & 0.9923 & 6.165 & $2.369\times10^{-5}$ \\
+      20 & 0.976 & 0.520 & 0.9928 & 6.145 & $2.215\times10^{-5}$ \\\hline
+      average &  &  &  & $6.174\pm0.055$ \\\hline
+  %    std. err. &  & &  & 0.055 \\\hline
+    \end{tabular}
+    \caption{不同权重网络的最优$\kappa_c$以及对应的信号效率$\epsilon_{s,cnn}$，背景拒绝率$1-\epsilon_{b,cnn}$，$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$和最终的本底水平(BI，单位：count$\cdot$kg$^{-1}\cdot$keV$^{-1}\cdot$year$^{-1}$)。BI计算过程中使用了 $3.088\times10^{-3}$ count$\cdot$kg$^{-1}\cdot$keV$^{-1}\cdot$year$^{-1}$ 作为未经CNN网络鉴别时的本底水平。}
+    \label{tab:efficiencies}
+  \end{table}
+  
 % vim:ts=4:sw=4
