@@ -1,14 +1,14 @@
 % Copyright (c) 2014,2016 Casper Ti. Vector
 % Public domain.
 
-\chapter{利用CNN分辨NLDBD事件和背景事件}
+\chapter{利用卷积神经网络分辨NLDBD事件和背景事件}
 \label{chapter:cnn}
 
 正如上文所述，NLDBD事件是一个及其稀有的事件，其半衰期超过了$1.07\times10^{26}$年，因而对于实验中的本底控制提出了很高的要求。根据第\ref{chapter:background}章所进行的背景模拟数据，PandaXIII实验中200kg级的探测器每年会探测到约78个本底$\gamma$事件落在ROI能量区间中，这个事件率还是远远高于实验的需求，因而需要一些其他的方式来压低本地信号，其中最自然的方法便是利用事件径迹的相关信息来区分背景事件和NLDBD事件。
 
 NLDBD事件会同时释放出两个高能电子，在其径迹的两个末端会有这十分明显的布拉格峰，这是NLDBD事件最为明显的一个特征。而传统的$\gamma$本底事件一般通过一次或多次康普顿散射产生一个或多个次级电子，所以$\gamma$射线的径迹会形成一个或多个单末端布拉格峰的径迹。所以如果我们能够得到探测器探测到事件的详细径迹信息，就可以由此高效的分辨出本底事件和NLDBD事件，从而极大的压低本地。
 
-然而因为PandaXIII读出系统的限制，使用传统的方法重建径迹会变得比较困难，因而我们探究了使用CNN深度神经网络来进行事件鉴别这一方法，得到了较为优异的效果。本章节详细描述了利用CNN进行事件鉴别的动机，CNN模型的选择和搭建，数据处理和训练等细节，希望能够帮助读者建立起对于CNN清晰简单的认识，为高能物理研究甚至是其他领域的研究提供相应的帮助。
+然而因为PandaXIII读出系统的限制，使用传统的方法重建径迹会变得比较困难，因而我们探究了使用深度神经网络(DNN)中的卷积神经网络(CNN)来进行事件鉴别这一方法，得到了较为优异的效果。本章节详细描述了利用CNN中进行事件鉴别的动机，CNN模型的选择和搭建，数据处理和训练等细节，希望能够帮助读者建立起对于DNN以及CNN清晰简单的认识，为高能物理研究甚至是其他领域的研究提供相应的帮助。
 
 \section{传统鉴别方法以及遇到的困难}
 
@@ -61,7 +61,7 @@ NLDBD事件投影图，该事件在Z在(80,110)毫米处的径迹纠缠在了一
 
 MM条状读出同时还带来了另外一个困难，因为一个电子要么落在X读出条所在的像素中，要么落在Y读出条所在的像素中，因而径迹相同位置在重建后的两个投影处的能量并不相等。所以根据能量的大小做X-Y的匹配也困难重重。作者个人认为在使用MM条状读出的前提下，能够良好的重建出径迹基本是不可能的，因而需要探寻新型的事件鉴别的方式方法。于是我们便试图将近年来在计算机领域大放异彩的深度神经网络引入我们的粒子鉴别，以期望它能够解决这个难题。
 
-\section{CNN介绍以及使用动机}
+\section{深度神经网络介绍以及使用动机}
 
 \subsection{使用动机}
 正如上文所说的，使用MM作为读出时很难通过重建出3维径迹后利用物理图像直接分类，但是如果将形如图\ref{fig:samples}的图片交于人眼来识别，那么相信绝大部分的人都可以轻而易举的分辨出NLDBD事件和背景$\gamma$事件。同时在这个分辨过程中我们并没有试图将两个偷影重建成3维的信息，而是直接通过分析比较两个投影并找到径迹的末端。这种行为操作相对来说难于量化，虽然可能可以通过精细的CUT达成，但是在这些操作的过程中可能需要人工的丢掉大量的数据以降低CUT的复杂度，这都不是我们所希望的。
@@ -108,7 +108,9 @@ $$g(z)=\frac{1}{1+e^{-z}}$$
 \end{enumerate}
 在PandaXIII中，我们的问题是使用神经网络来鉴别一个事件是NLDBD事件或者是背景事件，这是一个非常明确的二分类问题。即我们的输入是事件的信息，输出是事件的类型。我们通过将会选择几个模型，使用MC生成的数据加以训练和测试，从中挑选出最为合适的网络并最终用于真实的实验数据中。
 
-\subsection{CNN以及其他类型神经网络介绍}
+\subsection{DNN,CNN以及其他类型神经网络介绍}
+
+深度神经网络(Deep Neural Network)相对与传统的神经网络而言，核心区别便是网络层数多，结构复杂。所以虽然它的概念很早就被提出，但是直到2008年，使用图形处理器加速通用计算的技术出现后，人们才有能力去构建的训练深度神经网络。 一般来说拥有两个及以上隐藏层的网络便可以被称作深度神经网络，所以当今在图像处理，人工智能等各个方向应用。但是在神经网络中，越是复杂的网络越需要细致的设计和优化调整来达到更为优异的效果，因此在处理具体问题中，相对出从零开始构造一个深度神经网络，尝试和修改既有的深度神经网络更为可行。
 
 卷积神经网络(Convolutional Neural Network)现在神经网络相关领域中机器重要的一部分，它广泛应用在图像识别的相关方向。相对于普通的全连接网络，CNN的核心便是模型中拥有卷积层。一个简单的二维卷积操作如公式\ref{eq:con}所示。卷积神经网络处理的一般是图片，因而输入数据一般是一个二维的张量，它与一个被称作卷积核的参数矩阵做卷积操作，并将结果输出，这就形成了卷积层中的一个神经元。图\ref{fig:con}给出了另外一个正在进行的卷积操作示意图。
 \renewcommand\arraystretch{1.0}
@@ -140,8 +142,6 @@ $$g(z)=\frac{1}{1+e^{-z}}$$
 \end{figure}
 
 一层卷积层便是由N个卷积神经元所组成，每个卷积神经元都有一个$M \times M$的卷积核。因而对于一个输入维度（X,X)的张量，卷积层使用了$N\times M\times M$个参数对输入数据进行处理，输出张量的维度为(N,X-M+1,X-M+1)。而如果试图使用全连接层网络寻找图片的N个特征，那么全连接层的参数数目将会是$N\times X\times X$，远远大于卷积层的参数数目。所以说相对于全连接层，卷积层认为图片的局部特征是有一定的关联性和通用性的，因而可以较小参数的卷积核来表征和卷积操作来表示和提出该特征，从而在大大降低参数数目和计算复杂度的情况下依然拥有着良好的效果。
-
-除了卷积神经网络之外，我们通常还会提到深度神经网络(Deep Neural Network)，它的核心便是网络层数多切复杂，网络比较”深“。一般来说，相对于机器学习中的神经网络，拥有两个及以上隐藏层的网络便可以被称作深度神经网络。但是在神经网络中，越是复杂的网络越需要细致的设计和优化调整来达到更为优异的效果，因此在处理具体问题中，相对出从零开始构造一个深度神经网络，尝试和修改既有的深度神经网络更为可行。
 
 递归神经网络(Recurrent Neural Network, RNN)则更适用于处理自然语言识别等相关领域。相对于普通的全连接网络，递归神经网络考虑到了每一层内神经元之间的相互作用，即每次训练中递归层的结果会影响到下一次训练的过程中。因而递归神经网络可以提取数据序列中的相对关系，对于自然语言处理，时间序列数据的处理更为合适。
 
@@ -297,8 +297,8 @@ ResNet被称作深度残差网络。在传统的卷积神经网络图像分类�
 \begin{table}
     \centering
     \begin{tabular}{ccccc}
-      \\\hline
-  layer name & layer type &  output tensor  & layer attribute & repetition \\\hline
+      \\\hline \hline
+  layer name & layer type &  output tensor  & layer attribute & repetition \\\hline \hline
   input\_1  & InputLayer & 240, 240, 3 &  & \\ \hline
   conv1 block & Convolution2D & 120, 120, 64 & 7$\times$7, 64 &  \\ \hline
   pooling & MaxPooling2D & 59, 59, 64 &  &  \\ \hline
@@ -318,7 +318,7 @@ ResNet被称作深度残差网络。在传统的卷积神经网络图像分类�
   flatten & Flatten & 2048 &  & \\ \hline
   dense & Dense & 256 & relu & \\  \hline
   dropout & Dropout & 256 &  & \\   \hline
-  dense & Dense & 1 & sigmoid & \\ \hline
+  dense & Dense & 1 & sigmoid & \\ \hline \hline
     \end{tabular}
     \caption{修改后的ResNet网络结构示意表，表中“repetition”表示网络块重复堆叠的次数，默认是1。网络中部分层以及快捷连接被省略，关于Resnet50核心部分的组成请参见论文\cite{he2016deep}。}
     \label{tab:resnet}
@@ -363,7 +363,7 @@ ResNet被称作深度残差网络。在传统的卷积神经网络图像分类�
 
 根据PandaXIII中期报告中的计算，TPC所能探测到的NLDBD事件的半衰期与FOM成正比，因而可以通过最优化$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$来选择网络的cut位置$\kappa_c$。图\ref{fig:cnn_eff}下半部分展示了Model-16中$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$随$\kappa_c$的变化。当$\kappa_c$位于0.983处时，事件鉴别的FOM值最大。不同网络之间的优劣差别也可以通过对比最优FOM得到，表\ref{tab:efficiencies}描述了Model-16到Model-20，5种不同权重的网络FOM相关信息，从中可以看出Model-16能够达到最优的鉴别效果。此时信号效率为47.5\%，背景拒绝率为99.43\%，即压低本地约175倍。
 
-\begin{table}[hbt]
+\begin{table}
     \centering
     \begin{tabular}{cccccc}
       \\\hline
@@ -380,4 +380,54 @@ ResNet被称作深度残差网络。在传统的卷积神经网络图像分类�
     \label{tab:efficiencies}
   \end{table}
   
+从表中数据来看虽然各个模型中选取最优阈值时信号效率以及背景拒绝率率相差较大，但是其比值$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$十分的稳定，误差只有约0.1\%，说明使用训练CNN来进行事件鉴别还是相对稳定的，其达到的最终效果与模型的机构关系较大，而与训练的次数关系较小。在这些网络中，我们最终选定了效果最好的Model-16权重网络作为PandaXIII事件鉴别中所用的网络。图\ref{fig:cnn_roc}绘制了该网络的ROC曲线。图\ref{fig:cnn_specturm}绘制了经过Model-16分类前后，测试数据集的能谱对比图，该能谱对比图也验证了之前使用CNN进行事件鉴别与事件自身的能量没有关系的猜想。
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{pic/06b_roc.pdf}
+    \caption{Model-16背景拒绝率与信号效率关系图（ROC曲线)}
+    \label{fig:cnn_roc}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{pic/08_energy_spectrum.pdf}
+    \caption{经过CNN鉴别前后，信号以及背景的能谱对比示意图。左图：NLDBD信号事件。右图：2447keV $\gamma$背景事件。}
+    \label{fig:cnn_specturm}
+\end{figure}
+
+正如图\ref{fig:cnn_dis}分布中所绘制的，虽然CNN的分类效果十分优异，但是仍然有一部分的误判存在。图\ref{fig:wrong_judge}给出了两个被错误分类事件的投影图，从这两个误判事例中NLDBD事件的径迹看上去的确只有一个布拉格峰，而背景事件也确实发生了连续的两次康普顿散射过程从而径迹拥有两个明确的布拉格峰。因此我们认为CNN网络的误判中有一部分是系统误差造成的。这也解释了图\ref{fig:cnn_dis}中背景实例$\kappa$分布不是单调递减的，的确有一部分背景事件的物理特征就如同NLDBD事件一样，因而CNN做出了错误判断也是可以理解和接受的。
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\linewidth]{pic/07_sab_track.pdf}
+    \includegraphics[width=0.4\linewidth]{pic/07_bas_track.pdf}
+    \caption{Model-16错误分类的一些事件的投影图。左图：一个被认为成背景的NLDBD信号事件，右图：一个被认为成信号的背景事件。}
+    \label{fig:wrong_judge}
+\end{figure}
+
+\section{小节}
+
+本章研究了使用CNN深度卷积神经网络鉴别蒙特卡洛产生的NLDBD事件和背景事件。通过使用ResNet50网络模型我们能够在压低背景信号175倍的同时达到47.5\%的信号效率。PandaXIII中期报告中给出NLDBD事件半衰期检测线满足公式\ref{eq:half}\supercite{cdr}
+\begin{equation}
+    T_{1/2}^{0\nu}\propto\eta\cdot\epsilon\sqrt{\frac{M\cdot T}{r\cdot\delta E}}
+    \label{eq:half}
+\end{equation}
+其中$\eta$为探测器效率，r为本底水平BI，即正比与上文中提到的FOM。相较于PandaXIII中期设计报告中对于事件鉴别的预期(压低本底30-35倍时达到35\%的探测效率)CNN完满的达成了需求，并能够额外带来64.2\%的提升，如表\ref{tab:comparison}所示。按照中期报告中对于检测线的估算并考虑到CNN对其带来的提高，在使用1吨量级探测器以及采样3年的数据后，\xeots的NLDBD半衰期检测线可以达到约$1.6\times10^{27}$年。
+
+\begin{table}[hbt]
+    \centering
+    \begin{tabular}{ccccc}
+      \\\hline
+      & PandaX-III 基准 & CNN (model-16) & CNN (model-18) & CNN (average) \\\hline
+      $\epsilon_{s}$ & 0.645 & 0.475  & 0.487 & \\
+      $ 1-\epsilon_{b}$ & 0.9714 & 0.9943  & 0.9936 &\\
+      $\epsilon_{s}/\sqrt{\epsilon_{b}}$ & 3.816 & 6.264 & 6.098 & 6.174 \\\hline
+      改进 & - & $64.2\%$ & $59.8\%$ & $61.8\%$\\\hline
+    \end{tabular}
+    \caption{使用CNN鉴别事件与PandaXIII中期报告中基准设计对比表。}
+    \label{tab:comparison}
+  \end{table}
+  
+
 % vim:ts=4:sw=4

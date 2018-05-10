@@ -8,6 +8,17 @@
 \usepackage[backend = biber, style = caspervector, utf8, sorting = none, giveninits = true, sortgiveninits = true]{biblatex}
 \usepackage{multirow}
 \usepackage{mathrsfs}
+\usepackage{hyperref}
+
+\usepackage{algorithm}  
+\usepackage{algorithmicx}  
+\usepackage{algpseudocode}  
+\usepackage{amsmath}  
+
+\floatname{algorithm}{算法}  
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}  
+\renewcommand{\algorithmicensure}{\textbf{输出:}}  
+  
 % 按学校要求设定参考文献列表中的条目之内及之间的距离。
 \setlength{\bibitemsep}{3bp}
 % 对于 linespread 值的计算过程有兴趣的同学可以参考 pkuthss.cls。
@@ -35,7 +46,7 @@
 % 设定文档的基本信息。
 \pkuthssinfo{
 	cthesisname = {硕士研究生学位论文}, ethesisname = {Master Thesis},
-	ctitle = {PandaxIII中本底模拟及探测器分辨率研究}, etitle = {The Background Simulation and Detector Resolution Study in PandaXIII},
+	ctitle = {PandaxIII探测器模拟和利用深度神经网络进行重建及GPU在RooFit中的应用}, etitle = {The Background Simulation and Detector Resolution Study in PandaXIII},
 	cauthor = {乔颢},
 	eauthor = {Hao Qiao},
 	studentid = {1501210103},
@@ -97,6 +108,7 @@
 	\include{chap/chap1}
 	\include{chap/chap2}
 	\include{chap/chap3}
+	\include{chap/chap4}
 	% 结论。
 	\include{chap/conclusion}
 
