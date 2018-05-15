@@ -1,27 +1,27 @@
-\chapter{BambooKeras训练细节}
+\chapter{BambooKeras 训练细节}
 \label{section:train_details}
 
-我们在训练和使用CNN时使用了基于Keras深度神经网络框架构建的一组Python 脚本，它被BambooKeras。本文在这里以一个3层的简单CNN网络为例，快速的介绍一下Keras的使用方法以及训练时所需要注意的细节。
+我们在训练测试 CNN 时使用了基于 Keras 深度神经网络框架构建的一组 Python 脚本，它被 BambooKeras 。本文在这里以一个3层的简单 CNN 网络为例，快速的介绍一下 Keras 的使用方法以及训练时所需要注意的细节。
 
-\section{Keras安装}
-使用Keras前首先需要寻找一台合适的计算机。虽然Keras支持在CPU上运行，但是考虑到计算效率，这台计算机应该至少包含一块Nvidia的支持CUDA运算的显卡，推荐本文所使用的Nvidia GeForce 1080或更高性能的显卡。在构建和训练CNN网络的时，显卡的CUDA核心数目以及频率决定了训练中计算的速度，内存的大小和硬盘的读取速度决定了加载数据的速度，而显存的大小则限定了网络的规模以及参数数目。因而不同的网络所需要的最低性能也不一致。例如3层简单CNN可以在绝大多数笔记本上运行起来，而Resnet50可能就需要更为强大的台式显卡的才能满足训练需求。
+\section{Keras 安装}
+使用 Keras 前首先需要寻找一台合适的计算机。虽然 Keras 支持在 CPU 上运行，但是考虑到计算效率，这台计算机应该至少包含一块 Nvidia 的支持 CUDA 运算的显卡，推荐本文所使用的 Nvidia GeForce 1080 或更高性能的显卡。在构建和训练 CNN 网络的时，显卡的 CUDA 核心数目以及频率决定了训练中计算的速度，内存的大小和硬盘的读取速度决定了加载数据的速度，而显存的大小则限定了网络的规模以及参数数目。因而不同的网络所需要的最低性能也不一致。例如 3 层简单 CNN 可以在绝大多数笔记本上运行起来，而 Resnet50 可能就需要更为强大的台式显卡的才能满足训练需求。
 
-与Caffee等深度神经网络框架所不同，Keras更像是一个简化版的封装，实际的网络的训练和计算是由Keras的后端程序Theano或者Tensorflow所处理，而Keras则提供了一系列用户友好的python接口，因而Keras非常适合与快速的实验和研究。所以如果读者需要自己实现网络层，或者有着更高性能的需求时，Keras就并不是一个很好的选择。
+与 Caffee 等深度神经网络框架所不同，Keras 更像是一个简化的封装，实际的网络的训练和计算是由 Keras 的后端程序 Theano 或者 Tensorflow 所处理。Keras 则提供了一系列用户友好的 python 接口，因而非常适合于快速的实验和研究。所以如果读者需要自己实现网络层，或者有着更高性能的需求时，Keras 并不是一个很好的选择。
 
-Keras的安装相对简单，即依次安装CUDA，cuDNN, TensorFlow\footnote{本文中都是使用了TensorFlow作为Keras的后端。}, Keras。其中 TensorFlow 以及Keras都可以使用pip来快速的安装。安装过程中需要注意 Keras 对于 TensorFlow 的版本要求以及 TensorFlow 对于cuDNN，CUDA的版本要求。 
+Keras 的安装相对简单，即依次安装 CUDA，cuDNN, TensorFlow\footnote{本文中都是使用了TensorFlow作为Keras的后端。}, Keras。其中 TensorFlow 以及 Keras 都可以使用 pip 来快速的安装。安装过程中需要注意 Keras 对于 TensorFlow 的版本要求以及 TensorFlow 对于 cuDNN，CUDA 的版本要求。 
 
-Keras的相关文档可以访问\url{https://keras.io/zh}查看。
+Keras 的相关文档可以访问\url{https://keras.io/zh}查看。
 
-\section{3层简单卷积神经网络的搭建和训练}
+\section{3 层简单卷积神经网络的搭建和训练}
 
 样例代码参照：
 
 \url{https://gist.github.com/Catofes/e088c9b2d50a2907e2c05e5a054ac521}
 
-使用Keras搭建一个神经网络十分的简单，即使用\verb|model = Sequential()|构建一个层叠的网络Model，而后使用\verb|model.add(layer)|即可添加不同的层。构建网络时需要注意以下几点：
+使用 Keras 搭建一个神经网络十分的简单，即使用 \verb|model = Sequential()| 构建一个层叠的网络 Model ，而后使用\verb|model.add(layer)| 即可添加不同的层。构建网络时需要注意以下几点：
 \begin{itemize}
-    \item 网络的的第一层需要显式的制定输如数据的维度，对于一个60x60像素的彩色图片，其 input\_shape 即为 (60,60,3)。
-    \item 二维卷积层 \verb|Convolution2D| ，二维池化层 \verb|MaxPooling2D| ，全连接层 \verb|Dense| ，激活层 \verb|Activation| 的具体意义请参阅Keras手册。
+    \item 网络的的第一层需要显式的制定输如数据的维度，对于一个 60x60 像素的彩色图片，其 input\_shape 即为 (60,60,3)。
+    \item 二维卷积层 \verb|Convolution2D| ，二维池化层 \verb|MaxPooling2D| ，全连接层 \verb|Dense| ，激活层 \verb|Activation| 的具体意义请参阅 Keras 手册。
     \item 为了减少过拟合，应该在合适的地方加入 \verb|Dropout| 层。
     \item 不同问题所适用的损失函数 \verb|loss| 以及优化器 \verb|optimizer| 也不同，应仔细选择。
 \end{itemize}
@@ -33,16 +33,16 @@ Keras的相关文档可以访问\url{https://keras.io/zh}查看。
 \begin{itemize}
     \item 一般而言，训练样本数据都会比较大，从而不能完全加载到内存中，这时应该使用 \verb|ImageDataGenerator| 从外存(硬盘)中实时加载数据。
     \item \verb|ImageDataGenerator| 也可以用于数据提升，即在读入图片数据时对图片进行旋转，放缩，变形等操作，这样就可以保证CNN训练时的输入数据不会出现重复。数据提升是减少过拟合的有力方式。
-    \item 训练集数据和验证集数据一定不能掺杂混用。验证集数据一般占所有数据比例的10\%。验证集数据的准确度大于训练集数据准确度时一般代表着过拟合的发生。
+    \item 训练集数据和验证集数据一定不能掺杂混用。验证集数据一般占所有数据比例的 10\%。验证集数据的准确度大于训练集数据准确度时一般代表着过拟合的发生。
     \item 增加训练数据，降低网络规模是避免过拟合的重要手段。
-    \item \verb|batch_size|不宜过大或者过小，一般网络可以选择32。
+    \item \verb|batch_size| 不宜过大或者过小，一般网络可以选择32。
 \end{itemize}
 
 
 \section{3层简单卷积神经网络，VGG16，以及ResNet50对比}
 \label{section:resnet_compare}
 
-在实验中我们对比测试了上文所构建的三层简单CNN，VGG16以及ResNet50。测试结果如表\ref{tab:cnn_compare}所示。VGG16也是一个比较优秀的模型，而且它的层数较少，结构较为简单，训练更为快速高效，因而在普通需求下可以先行尝试该模型。
+在实验中我们对比测试了上文所构建的三层简单 CNN ，VGG16 以及 ResNet50。测试结果如表\ref{tab:cnn_compare}所示。VGG16 也是一个比较优秀的模型，而且它的层数较少，结构较为简单，训练更为快速高效，因而在普通需求下可以先行尝试该模型。
 \renewcommand\arraystretch{1.4}
 \begin{table}[hbt]
     \centering

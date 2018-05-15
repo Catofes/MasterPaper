@@ -4,7 +4,8 @@
 \chapter{PandaXIII其他的TPC设计中的模拟工作}
 %\pkuthssffaq % 中文测试文字。
 
-PandaXIII中除了设计了如节\ref{section:detector}中所描述探测器结构外，还设计了其他的探测器结构加以测试。在原设计中铜罐自身即为压力容器，所以需要使用不锈钢钉进行铆合，带来了较大的本底，同时铜相对较软，作为压力容器可能会带来一定的风险，所以实验就设计了使用强度更强的，质量更轻的钛罐作为压力容器，内部衬铜完全作为屏蔽结构，以期待来带更好的屏蔽效果。
+PandaXIII 中在如节\ref{section:detector}中所描述探测器结构外，还设计了其他多种探测器结构以供选择。在原设计中铜罐自身即为压力容器，所以需要使用不锈钢钉进行铆合，从而带来了较大的本底。同时铜相对较软，作为压力容器可能会带来一定的风险。因此实验就设计了使用强度更强的，质量更轻的钛罐作为压力容器，内部衬铜作为屏蔽结构，以期能够得到更低的本底水平。
+
 \renewcommand\arraystretch{1.2}
 \begin{table*}[hbt]
     \begin{center}
@@ -12,18 +13,18 @@ PandaXIII中除了设计了如节\ref{section:detector}中所描述探测器结�
         \hline
         \hline
         \textbf{组件}   &   \textbf{参数}   &   \textbf{值} &   \textbf{材料} & \textbf{质量} \\ \hline
-        \multirow{3}{*}{钛罐} 
+        \multirow{3}{*}{钛罐罐体} 
             &   内径&   85\,cm&     \multirow{3}{*}{钛} &   \multirow{3}{*}{855 kg} \\
             &   高度&   210\,cm&    &   \\   
             &   壁厚&   1.5\,cm&    &   \\\hline
-        \multirow{2}{*}{钛盖} 
+        \multirow{2}{*}{钛罐端盖} 
             & 直径 & 91.5\,cm & \multirow{2}{*}{钛} & \multirow{2}{*}{1758 kg} \\
             & 厚度 & 7.5\,cm &  &    \\\hline
         \multirow{2}{*}{铜衬底} 
             & 内径 & 80\,cm & \multirow{2}{*}{铜} & \multirow{2}{*}{6678 kg} \\
             & 内高 & 200\,cm &  &    \\
             & 厚度 & 5\,cm &  & \\\hline
-        \multirow{2}{*}{螺钉} 
+        \multirow{2}{*}{不锈钢螺钉} 
             & 直径 & 1.4\,cm & \multirow{2}{*}{不锈钢} & \multirow{2}{*}{94.6 kg} \\
             & 高度 & 20\,cm &  &    \\
         \hline
@@ -34,8 +35,7 @@ PandaXIII中除了设计了如节\ref{section:detector}中所描述探测器结�
     \end{center}
 \end{table*}
 
-探测器设计尺寸表\ref{tab:ti_structure}所示。虽然钛罐子自身质量很轻，但是因为工艺原因该材料放射性清洁程度极差，在模拟中我们认为\utte的活度为90\uBqkg，而\thttt的活度为
-230\uBqkg。不考虑探测器响应的模拟结果如表所示\ref{tab:ti_bck}所示。可以看出虽然来自于螺钉的本底事件被压低了一些，但是钛罐自身产生的本地辐射太强，远远高于铜罐的设计。
+探测器设计尺寸表\ref{tab:ti_structure}所示。虽然钛罐自身质量很轻，但是因为工艺原因该材料放射性清洁程度极差，在模拟中我们认为 \utte 的活度为 90\uBqkg，\thttt 的活度为 230\uBqkg。不考虑探测器响应的模拟结果如表所示\ref{tab:ti_bck}所示。可以看出虽然来自于螺钉的本底事件被压低了一些，但是钛罐自身产生的本底辐射太强，整体远远高于铜罐的设计。
 
 \begin{table*}[hbt]
     \centering
@@ -47,7 +47,7 @@ PandaXIII中除了设计了如节\ref{section:detector}中所描述探测器结�
         \multirow{2}{8em}{钛罐罐体} 
             & $^{238}$U  &  90 $\mu$Bq/kg & 10.7 &  43  \\
             & $^{232}$Th & 230  $\mu$Bq/kg & 233.4 & 892 \\ \hline
-        \multirow{2}{8em}{钛罐盖子}
+        \multirow{2}{8em}{钛罐端盖}
             & $^{238}$U  & 90 $\mu$Bq/kg  & 5.8 &  23.2 \\
             & $^{232}$Th & 220 $\mu$Bq/kg & 132.7 & 530  \\
             \hline
@@ -64,8 +64,7 @@ PandaXIII中除了设计了如节\ref{section:detector}中所描述探测器结�
     \label{tab:ti_bck}
   \end{table*}
 
-
-  在发现5cm厚的铜衬底不足以屏蔽来自钛罐的本底时，我们继续测试了使用更厚的10cm铜衬底的效果，此时探测器的结构如表\ref{tab:ti_structure_big}，不考虑探测器响应的本底结果如表\ref{tab:ti_bck_big}所示。此时本地强度依然是纯铜罐设计的5倍左右，完全不能够被接受，因此在目前的设计中还是直接使用铜罐作为压力容器。如果我们能够找到更为洁净的钛以及不锈钢材料那么还是有可能更换设计的。
+  在发现5cm厚的铜衬底不足以屏蔽来自钛罐的本底辐射后，我们继续测试了使用更厚的 10cm 铜衬底的效果，此时探测器的结构如表\ref{tab:ti_structure_big}，不考虑探测器响应的本底结果如表\ref{tab:ti_bck_big}所示。此时本地强度依然是纯铜罐设计的 5 倍左右，因此在目前的设计中还是直接使用铜罐作为压力容器。如果能够找到更为洁净的钛以及不锈钢材料那么这种设计还是有可能被考虑的。
 
   \begin{table*}[hbt]
     \begin{center}
@@ -73,18 +72,18 @@ PandaXIII中除了设计了如节\ref{section:detector}中所描述探测器结�
         \hline
         \hline
         \textbf{组件}   &   \textbf{参数}   &   \textbf{值} &   \textbf{材料} & \textbf{质量} \\ \hline
-        \multirow{3}{*}{钛罐} 
+        \multirow{3}{*}{钛罐罐体} 
             &   内径&   90\,cm&     \multirow{3}{*}{钛} &   \multirow{3}{*}{1957 kg} \\
             &   高度&   220\,cm&    &   \\   
             &   壁厚&   1.5\,cm&    &   \\\hline
-        \multirow{2}{*}{钛盖} 
+        \multirow{2}{*}{钛罐端盖} 
             & 直径 & 96.5\,cm & \multirow{2}{*}{钛} & \multirow{2}{*}{1758 kg} \\
             & 厚度 & 7.5\,cm &  &    \\\hline
         \multirow{2}{*}{铜衬底} 
             & 内径 & 80\,cm & \multirow{2}{*}{铜} & \multirow{2}{*}{14130 kg} \\
             & 内高 & 200\,cm &  &    \\
             & 厚度 & 10\,cm &  & \\\hline
-        \multirow{2}{*}{螺钉} 
+        \multirow{2}{*}{不锈钢螺钉} 
             & 直径 & 1.4\,cm & \multirow{2}{*}{不锈钢} & \multirow{2}{*}{94.6 kg} \\
             & 高度 & 20\,cm &  &    \\
         \hline
@@ -105,7 +104,7 @@ PandaXIII中除了设计了如节\ref{section:detector}中所描述探测器结�
         \multirow{2}{8em}{钛罐罐体} 
             & $^{238}$U  &  90 $\mu$Bq/kg & 1.6 &  6.4  \\
             & $^{232}$Th & 230  $\mu$Bq/kg & 45.0 & 180 \\ \hline
-        \multirow{2}{8em}{钛罐盖子}
+        \multirow{2}{8em}{钛罐端盖}
             & $^{238}$U  & 90 $\mu$Bq/kg  & 2.2 &  8.7 \\
             & $^{232}$Th & 220 $\mu$Bq/kg & 28.1 & 112  \\
             \hline
