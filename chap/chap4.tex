@@ -17,7 +17,7 @@
     g(x)=C'\int_{x_{min}}^{x_{max}}f(t,x_0,\Gamma)\cdot\frac{1}{\sigma(t)}\cdot e^{-\frac{(t-x)^2}{2\sigma^2(t)}}\cdot dt 
 \end{equation}
 
-其中 $C'$ 为新的归一化因子，$x_{min}$ 和 $x_{max}$ 是测量区域的下限和上限。如果 $\sigma(t)\equiv\sigma_0$，此卷积结果即为 Voigt 函数，可以通过现有的快速算法计算得到\supercite{abrarov2011efficient}。因此我们将 Voigt 函数当作标准函数来检验积分的正确性。
+其中 $C'$ 为新的归一化因子，$x_{min}$ 和 $x_{max}$ 略大约测量区域的下限和上限\footnote{理论上积分范围应该是 $(0,\infty)$，但是因为远离积分区域 $3\sigma$ 外的事件贡献很小，所以可以做一定的近似处理。 }。如果 $\sigma(t)\equiv\sigma_0$，此卷积结果即为 Voigt 函数，可以通过现有的快速算法计算得到\supercite{abrarov2011efficient}。因此我们将 Voigt 函数当作标准函数来检验积分的正确性。
 
 常用的数值积分都可以写成被积函数 $f(x)$ 的若干个函数值的线性组合，即：
 \begin{equation}
@@ -31,7 +31,8 @@
 \begin{equation}
 \int_a^bf(x)dx=\frac{b-a}{2}\sum_{i=1}^n\omega_if(\frac{b-a}{2}x_i+\frac{b+a}{2})
 \end{equation}
-其中 $x_i$ 是 n 阶勒让德多项式的零点，$\omega_i$ 为对应预先计算好的权重\supercite{jisuanfangfa}\supercite{bogaert2014iteration}。
+其中 $x_i$ 是 n 阶勒让德多项式 $P_n(x)$ 的第 $i$ 个零点，$\omega_i$ 为对应的权重\supercite{jisuanfangfa}\supercite{bogaert2014iteration}：
+$$\omega_i=\frac{2}{(1-x_i^2)[P'_n(x_i)^2]}$$
 
 从两种积分方式的公式可以看出，当积分范围确定后，两种积分方法所选择的节点和系数都与被积函数无关，这是一个良好的适合于并行计算的特性，同时可以通过缓存节点和系数来加速计算。
 
@@ -99,7 +100,9 @@ RooFit 是 CERN（欧洲核子研究组织）开发的基于 C++ 的数据分析
 \end{algorithm} 
 该伪代码中使用了三个函数式编程中的概念，即 Sequence ， Map， Reduce 。 Sequence(count, start, step) 类似于 python 中的 range 函数，用于生成一个起始值为 start，间隔为 step 的长度为 count 的序列，并返回装有该序列的容器。Map (container, function)将 function 函数作用到容器中的每一个元素上，并将结果作为新的容器返回。Reduce (container, init, function)按照 function 函数合并容器里的所有元素，并返回最终结果。在该积分中，Sequence 产生了各个积分节点的位置，Map 给出了各个节点处函数的值，Reduce 求和得到了最终的积分结果。
 
-这三种操作中都是比较容易实现并行的，CUDA 的开发环境中有一套名为 thrust 的并行计算库\supercite{thrust}，它提供了 GPU 并行版本的 Sequence ， Map ， Reduce 方法（即 thrust::sequence, thrust::transform, thrust::reduce），所以只需要编写能够在 GPU 上运行的 GetVal 核函数（kernel function）即可。
+这三种操作中都是比较容易实现并行的，CUDA 的开发环境中有一套名为 thrust 的并行计算库\supercite{thrust}，它提供了 GPU 并行版本的 Sequence ， Map ， Reduce 方法（即 thrust::sequence, thrust::transform, thrust::reduce），所以只需要编写能够在 GPU 上运行的 GetVal 核函数（kernel function）即可。具体代码参照
+
+\url{https://gist.github.com/Catofes/e0b0763e0843a29924d187aa15656a49}
 
 \section{测试与分析}
 
@@ -120,6 +123,7 @@ RooFit 是 CERN（欧洲核子研究组织）开发的基于 C++ 的数据分析
 
 \begin{table*}
     \centering
+    \caption{不同节点数目时候四中积分结果相较于 Voigt 函数的偏差。}
     \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}cccc}
         \hline
         \hline							
@@ -131,13 +135,13 @@ RooFit 是 CERN（欧洲核子研究组织）开发的基于 C++ 的数据分析
         \hline
         \hline
     \end{tabular*}
-    \caption{不同节点数目时候四中积分结果相较于 Voigt 函数的偏差。}
+
     \label{tab:cuda_dif}
 \end{table*}
 
 \subsection{性能分析}
 
-随后我们测试了四种积分方法在考虑 $\sigma$ 变化情况（Real PDF）下的性能。被积函数中 $\sigma(t)=2.458\times\sqrt{t/20}, x_0=10, \Gamma=10,x_{max}=30,x_{min}=10$，如图\ref{fig:cuda_com}中红色虚线所示。可以看出 $\sigma$ 随能量变化的情况会最终影响 PDF 分布。如上节一样，本文统计四种方法在 10000 个测试点处的平均耗时，以此来比较它们的性能。统计得到的时间消耗随节点数目变化如图\ref{pic:cuda_2}所示。因为在节点数目较高时使用CPU方法所消耗的时间过长，所以图中使用CPU的方法最大只测试了 $1\times10^6$ 个节点。
+随后我们测试了四种积分方法在考虑 $\sigma$ 变化情况（Real PDF）下的性能。被积函数中 $\sigma(t)=2.458\times\sqrt{t/20}, x_0=10, \Gamma=10,x_{max}=30,x_{min}=10$，如图\ref{fig:cuda_com}中红色虚线所示。可以看出 $\sigma$ 随能量变化的情况会最终影响 PDF 分布。如上节一样，本文统计四种方法在 10000 个测试点处的平均耗时，以此来比较它们的性能。统计得到的时间消耗随节点数目变化如图\ref{fig:cuda_2}所示。因为在节点数目较高时使用CPU方法所消耗的时间过长，所以图中使用CPU的方法最大只测试了 $1\times10^6$ 个节点。
 
 \begin{figure}
     \centering
@@ -150,6 +154,7 @@ RooFit 是 CERN（欧洲核子研究组织）开发的基于 C++ 的数据分析
 
 \begin{table*}
     \centering
+    \caption{相对于 CPU 而言，使用 GPU 进行高斯积分、黎曼积分以及优化后的黎曼积分所带来的性能提升。}
     \begin{tabular*}{0.8\textwidth}{@{\extracolsep{\fill}}cccc}
         \hline
         \hline							
@@ -167,7 +172,6 @@ RooFit 是 CERN（欧洲核子研究组织）开发的基于 C++ 的数据分析
         \hline
         \hline
     \end{tabular*}
-    \caption{相对于 CPU 而言，使用 GPU 进行高斯积分、黎曼积分以及优化后的黎曼积分所带来的性能提升。}
     \label{tab:cuda_2}
 \end{table*}
 
@@ -178,7 +182,7 @@ RooFit 是 CERN（欧洲核子研究组织）开发的基于 C++ 的数据分析
 
 从图\ref{fig:cuda_2}和图\ref{fig:cuda_3}中也可以看出在节点数目低于一定阈值 $(C0)$ 的时候，GPU 积分计算所消耗的时间基本上是一个常数，正如上节性能分析中所说，此时 GPU 并没达到满载工作，核心数目满足积分计算的需求，大部分计算时间消耗到了初始化等操作中。即增加 GPU 的核心数目只能够提高节点数目的阈值 $(C0)$ 的大小。所以当被积分函数形式复杂，变化剧烈，需要超过阈值 $(C0)$ 个积分节点来保障描述函数变化细节时，增加 GPU 核心数目能够提高计算的性能。 
 
-\begin{figure}
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.6\columnwidth]{pic/c2.pdf}
     \caption{ 使用 CPU 的黎曼积分(CPU Riemann)，使用 GPU 的黎曼积分(GPU Riemann)以及优化后的黎曼积分(GPU Riemann Tuned)积分耗时与节点数目的关系。}

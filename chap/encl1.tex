@@ -9,6 +9,7 @@ PandaXIII 中在如节\ref{section:detector}中所描述探测器结构外，还
 \renewcommand\arraystretch{1.2}
 \begin{table*}[hbt]
     \begin{center}
+        \caption{钛罐组成部件的几何参数，材料以及质量表。\supercite{cdr}}
         \begin{tabular*}{0.75\textwidth}{@{\extracolsep{\fill}}ccccc}
         \hline
         \hline
@@ -30,7 +31,6 @@ PandaXIII 中在如节\ref{section:detector}中所描述探测器结构外，还
         \hline
         \hline
         \end{tabular*}
-        \caption{钛罐组成部件的几何参数，材料以及质量表。\supercite{cdr}}
         \label{tab:ti_structure}
     \end{center}
 \end{table*}
@@ -39,11 +39,12 @@ PandaXIII 中在如节\ref{section:detector}中所描述探测器结构外，还
 
 \begin{table*}[hbt]
     \centering
+    \caption{钛罐设计中罐体以及螺钉对本底贡献表。}
     \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc}
-      \hline
-      \hline
-      \textbf{组件}&\textbf{元素}&\textbf{放射性活度}&\textbf{\multirow{2}{5em}{\centering 本底计数\\计数/年}}&\textbf{ \multirow{2}{8em}{\centering BI\\$10^{-5}c\/(keV\cdot kg\cdot y$)}}\\\\
-      \hline
+        \hline
+        \hline
+        \textbf{组件}&\textbf{元素}&\textbf{放射性活度}&\textbf{\multirow{2}{5em}{\centering 本底计数\\计数/年}}&\textbf{ \multirow{2}{8em}{\centering BI\\$10^{-5}c\/(keV\cdot kg\cdot y$)}}\\\\
+        \hline
         \multirow{2}{8em}{钛罐罐体} 
             & $^{238}$U  &  90 $\mu$Bq/kg & 10.7 &  43  \\
             & $^{232}$Th & 230  $\mu$Bq/kg & 233.4 & 892 \\ \hline
@@ -57,17 +58,17 @@ PandaXIII 中在如节\ref{section:detector}中所描述探测器结构外，还
         \multirow{2}{8em}{铜衬底}            
             & $^{238}$U  & 0.75 $\mu$Bq/kg  & 2.74 & 11 \\
             & $^{232}$Th & 0.2 $\mu$Bq/kg & 7.2& 29 \\
-      \hline
-      \hline
+        \hline
+        \hline
     \end{tabular*}
-    \caption{钛罐设计中罐体以及螺钉对本底贡献表。}
     \label{tab:ti_bck}
-  \end{table*}
+\end{table*}
 
   在发现5cm厚的铜衬底不足以屏蔽来自钛罐的本底辐射后，我们继续测试了使用更厚的 10cm 铜衬底的效果，此时探测器的结构如表\ref{tab:ti_structure_big}，不考虑探测器响应的本底结果如表\ref{tab:ti_bck_big}所示。此时本地强度依然是纯铜罐设计的 5 倍左右，因此在目前的设计中还是直接使用铜罐作为压力容器。如果能够找到更为洁净的钛以及不锈钢材料那么这种设计还是有可能被考虑的。
 
   \begin{table*}[hbt]
     \begin{center}
+        \caption{加厚钛罐组成部件的几何参数，材料以及质量表。\supercite{cdr}}
         \begin{tabular*}{0.75\textwidth}{@{\extracolsep{\fill}}ccccc}
         \hline
         \hline
@@ -89,18 +90,18 @@ PandaXIII 中在如节\ref{section:detector}中所描述探测器结构外，还
         \hline
         \hline
         \end{tabular*}
-        \caption{加厚钛罐组成部件的几何参数，材料以及质量表。\supercite{cdr}}
         \label{tab:ti_structure_big}
     \end{center}
 \end{table*}
 
   \begin{table*}[hbt]
     \centering
+    \caption{加厚钛罐设计中罐体以及螺钉对本底贡献表。}
     \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc}
-      \hline
-      \hline
-      \textbf{组件}&\textbf{元素}&\textbf{放射性活度}&\textbf{\multirow{2}{5em}{\centering 本底计数\\计数/年}}&\textbf{ \multirow{2}{8em}{\centering BI\\$10^{-5}c\/(keV\cdot kg\cdot y$)}}\\\\
-      \hline
+        \hline
+        \hline
+        \textbf{组件}&\textbf{元素}&\textbf{放射性活度}&\textbf{\multirow{2}{5em}{\centering 本底计数\\计数/年}}&\textbf{ \multirow{2}{8em}{\centering BI\\$10^{-5}c\/(keV\cdot kg\cdot y$)}}\\\\
+        \hline
         \multirow{2}{8em}{钛罐罐体} 
             & $^{238}$U  &  90 $\mu$Bq/kg & 1.6 &  6.4  \\
             & $^{232}$Th & 230  $\mu$Bq/kg & 45.0 & 180 \\ \hline
@@ -114,11 +115,10 @@ PandaXIII 中在如节\ref{section:detector}中所描述探测器结构外，还
         \multirow{2}{8em}{铜衬底}            
             & $^{238}$U  & 0.75 $\mu$Bq/kg  & 3.1 & 12 \\
             & $^{232}$Th & 0.2 $\mu$Bq/kg & 8.1& 32 \\
-      \hline
-      \hline
+        \hline
+        \hline
     \end{tabular*}
-    \caption{加厚钛罐设计中罐体以及螺钉对本底贡献表。}
     \label{tab:ti_bck_big}
-  \end{table*}
+\end{table*}
 
 % vim:ts=4:sw=4

@@ -263,6 +263,7 @@ PandaXIII 实验中读出电子学部分将会以 5MHz 的频率采样 512 个�
 \renewcommand\arraystretch{1.4}
 \begin{table*}
     \centering
+    \caption{NLDBD 信号样本以及 2447keV 和 2614keV 的 $\gamma$ 背景样本转换数据表。}
     \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ccccc}
         \hline
         \hline							
@@ -277,9 +278,8 @@ PandaXIII 实验中读出电子学部分将会以 5MHz 的频率采样 512 个�
         \hline
         \hline
     \end{tabular*}
-    \caption{NLDBD 信号样本以及 2447keV 和 2614keV 的 $\gamma$ 背景样本转换数据表。}
     \label{tab:convert}
-  \end{table*}
+\end{table*}
 
 \section{训练网络}
 \label{section:train}
@@ -298,6 +298,7 @@ ResNet 被称作深度残差网络。在传统的卷积神经网络图像分类�
 \end{figure}
 \begin{table}
     \centering
+    \caption{修改后的 Resnet 网络结构示意表，表中“repetition”表示网络块重复堆叠的次数，默认是 1。网络中部分层以及快捷连接被省略，关于 Resnet50 核心部分的组成请参见论文\cite{he2016deep}。}
     \begin{tabular}{ccccc}
       \\\hline \hline
   layer name & layer type &  output tensor  & layer attribute & repetition \\\hline \hline
@@ -322,7 +323,6 @@ ResNet 被称作深度残差网络。在传统的卷积神经网络图像分类�
   dropout & Dropout & 256 &  & \\   \hline
   dense & Dense & 1 & sigmoid & \\ \hline \hline
     \end{tabular}
-    \caption{修改后的 Resnet 网络结构示意表，表中“repetition”表示网络块重复堆叠的次数，默认是 1。网络中部分层以及快捷连接被省略，关于 Resnet50 核心部分的组成请参见论文\cite{he2016deep}。}
     \label{tab:resnet}
   \end{table}
 
@@ -366,6 +366,7 @@ PandaXIII 实验所能探测到的 NLDBD 事件半衰期与 FOM 成正比，所�
 
 \begin{table}
     \centering
+    \caption{不同权重网络的最优 $\kappa_c$ 以及对应的信号效率 $\epsilon_{s,cnn}$，背景拒绝率 $1-\epsilon_{b,cnn}$，$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$ 和最终的本底水平（BI，单位：count$\cdot$kg$^{-1}\cdot$keV$^{-1}\cdot$year$^{-1}$）。BI 计算过程中使用了 $3.088\times10^{-3}$ count$\cdot$kg$^{-1}\cdot$keV$^{-1}\cdot$year$^{-1}$ 作为未经 CNN 网络鉴别时的本底水平。}
     \begin{tabular}{cccccc}
       \\\hline
       epoch & optimized $\kappa_c$ & $\epsilon_{s,cnn}$ & $ 1-\epsilon_{b,cnn}$ &$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$ & final BI\\\hline
@@ -377,7 +378,6 @@ PandaXIII 实验所能探测到的 NLDBD 事件半衰期与 FOM 成正比，所�
       average &  &  &  & $6.174\pm0.055$ \\\hline
   %    std. err. &  & &  & 0.055 \\\hline
     \end{tabular}
-    \caption{不同权重网络的最优 $\kappa_c$ 以及对应的信号效率 $\epsilon_{s,cnn}$，背景拒绝率 $1-\epsilon_{b,cnn}$，$\epsilon_{s,cnn}/\sqrt{\epsilon_{b,cnn}}$ 和最终的本底水平（BI，单位：count$\cdot$kg$^{-1}\cdot$keV$^{-1}\cdot$year$^{-1}$）。BI 计算过程中使用了 $3.088\times10^{-3}$ count$\cdot$kg$^{-1}\cdot$keV$^{-1}\cdot$year$^{-1}$ 作为未经 CNN 网络鉴别时的本底水平。}
     \label{tab:efficiencies}
   \end{table}
   
@@ -418,6 +418,7 @@ PandaXIII 实验所能探测到的 NLDBD 事件半衰期与 FOM 成正比，所�
 
 \begin{table}[hbt]
     \centering
+    \caption{使用CNN鉴别事件与PandaXIII中期报告中基准设计对比表。}
     \begin{tabular}{ccccc}
       \\\hline
       & PandaX-III 基准 & CNN (model-16) & CNN (model-18) & CNN (average) \\\hline
@@ -426,7 +427,6 @@ PandaXIII 实验所能探测到的 NLDBD 事件半衰期与 FOM 成正比，所�
       $\epsilon_{s}/\sqrt{\epsilon_{b}}$ & 3.816 & 6.264 & 6.098 & 6.174 \\\hline
       改进 & - & $64.2\%$ & $59.8\%$ & $61.8\%$\\\hline
     \end{tabular}
-    \caption{使用CNN鉴别事件与PandaXIII中期报告中基准设计对比表。}
     \label{tab:comparison}
   \end{table}
   

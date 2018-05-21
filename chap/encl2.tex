@@ -46,6 +46,7 @@ Keras 的相关文档可以访问\url{https://keras.io/zh}查看。
 \renewcommand\arraystretch{1.4}
 \begin{table}[hbt]
     \centering
+    \caption{三种不同模型的CNN对比数据表。其中$\epsilon_{s}$是指压低背景50倍时信号的效率。}
     \begin{tabular}{cccc}
       \hline
       Model & 网络参数数目 & 准确度 & $\epsilon_{s}$ \\\hline
@@ -53,7 +54,6 @@ Keras 的相关文档可以访问\url{https://keras.io/zh}查看。
       VGG16 & $15,894,849$ & $92.8\%$  & $73.9\%$ \\
       ResNet-50 & $24,059,393$ & $94.0\%$ & $79.0\%$ \\\hline
     \end{tabular}
-    \caption{三种不同模型的CNN对比数据表。其中$\epsilon_{s}$是指压低背景50倍时信号的效率。}
     \label{tab:cnn_compare}
   \end{table}
   
